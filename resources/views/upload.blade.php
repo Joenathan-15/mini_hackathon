@@ -5,6 +5,7 @@
 @section('head')
 {{-- Tambahkan FontAwesome --}}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endsection
 
 @section('body')
@@ -83,17 +84,12 @@
             {{-- Tambahkan field kategori --}}
             <div class="form-control">
                 <label class="label font-medium">Kategori</label>
-                <select name="category" class="select select-bordered w-full" required>
-                    <option value="" disabled selected>Pilih kategori</option>
-                    <option value="Matematika">Matematika</option>
-                    <option value="Fisika">Fisika</option>
-                    <option value="Kimia">Kimia</option>
-                    <option value="Biologi">Biologi</option>
-                    <option value="Pemrograman">Pemrograman</option>
-                    <option value="Desain">Desain</option>
-                    <option value="Bisnis">Bisnis</option>
-                    <option value="Lainnya">Lainnya</option>
-                </select>
+                <div id="category-input-container"
+                    class="flex flex-wrap items-center gap-2 input input-bordered w-full min-h-[3rem] p-2">
+                    <input id="category-input" type="text" class="flex-1 bg-transparent outline-none"
+                        placeholder="Ketik dan tekan Enter..." />
+                </div>
+                <input type="hidden" name="categories" id="categories-hidden">
             </div>
 
             <div class="form-control">
@@ -130,6 +126,7 @@
 @endsection
 
 @section('script')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     (function(){
         const dropzone = document.getElementById('dropzone-area');
@@ -215,6 +212,54 @@
                 }
             });
         });
+                const container = document.getElementById('category-input-container');
+        const input = document.getElementById('category-input');
+        const hiddenInput = document.getElementById('categories-hidden');
+        let tags = [];
+
+        function updateHiddenInput() {
+            hiddenInput.value = JSON.stringify(tags);
+        }
+
+        function renderTags() {
+            // remove existing tags except input
+            container.querySelectorAll('.tag').forEach(tag => tag.remove());
+            tags.forEach(tag => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'tag bg-primary/10 border border-primary/30 text-primary px-3 py-1 rounded-full text-sm flex items-center gap-1';
+                tagEl.innerHTML = `
+                    ${tag}
+                    <button type="button" class="remove-tag text-primary hover:text-error">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                `;
+                container.insertBefore(tagEl, input);
+
+                tagEl.querySelector('.remove-tag').addEventListener('click', () => {
+                    tags = tags.filter(t => t !== tag);
+                    renderTags();
+                    updateHiddenInput();
+                });
+            });
+        }
+
+        input.addEventListener('keydown', (e) => {
+            const value = input.value.trim();
+            if ((e.key === 'Enter' || e.key === ',') && value) {
+                e.preventDefault();
+                if (!tags.includes(value)) {
+                    tags.push(value);
+                    renderTags();
+                    updateHiddenInput();
+                }
+                input.value = '';
+            } else if (e.key === 'Backspace' && !value && tags.length) {
+                tags.pop();
+                renderTags();
+                updateHiddenInput();
+            }
+        });
+
     })();
 </script>
 @endsection

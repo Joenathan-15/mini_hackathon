@@ -103,7 +103,7 @@ $(function () {
     // Fetch categories
     function fetchCategories(query = '') {
         $.ajax({
-            url: '/api/categories',
+            url: '/categories',
             method: 'GET',
             data: { search: query },
             dataType: 'json',

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Material\MaterialController;
 use App\Models\Material;
 use App\Models\Transaction;
@@ -39,10 +40,10 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/materials', [MaterialController::class, 'getMaterials'])->name('materials.get');
 
 Route::get('/explore', function () {
-    $materi = collect([]); // data kosong dulu biar gak error
-    return view('explore', compact('materi'));
+    return view('explore');
 })->name('explore');
 
+Route::get('categories',[CategoryController::class, 'index'])->name('category.index');
 
 Route::get('/', function () {
     return view('landing');
