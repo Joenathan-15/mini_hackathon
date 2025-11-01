@@ -32,7 +32,7 @@
         </div>
 
         <!-- Materi Diunggah -->
-        <h2 class="text-xl font-semibold text-gray-700 mb-4">Materi Diunggah</h2>
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">Berhasil Di Unggah</h2>
         <div id="uploads-container" class="grid md:grid-cols-3 gap-6">
             <p class="text-gray-500 italic col-span-3 text-center" id="loading-upload">Memuat data...</p>
         </div>
@@ -81,6 +81,16 @@
                     </span>
                 `;
 
+                const status = item.status === 'verified' 
+                    ? `<span class='text-green-500 text-xs'>Diverifikasi oleh AI ✓</span>` 
+                    : item.status === 'pending'
+                    ? `<span class='text-yellow-500 text-xs'>Menunggu verifikasi ⚠️</span>`
+                    : `<span class='text-red-500 text-xs'>Tidak terverifikasi oleh AI ⚠️</span>`;
+
+                const priceText = item.price > 0
+                    ? `Rp ${new Intl.NumberFormat('id-ID').format(item.price)}`
+                    : 'Gratis';
+
                 const card = `
                     <div class="bg-white border rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden">
                         <div class="flex justify-center items-center h-40 bg-white">
@@ -110,12 +120,10 @@
                 container.append(card);
             });
         },
-        error: function (xhr, status, error) {
-            console.error("Error fetching purchases:", error);
+        error: function () {
             $("#purchases-container").html(`<p class="text-red-500 italic col-span-3 text-center">Gagal memuat data</p>`);
         }
     });
-
 
     // === Fetch Materi Diunggah ===
     $.ajax({
@@ -134,6 +142,12 @@
             response.forEach(upload => {
                 const ext = upload.file_name.split('.').pop().toLowerCase();
                 const iconUrl = icons[ext] || icons.default;
+
+                const status = upload.status === 'verified' 
+                    ? `<span class='text-green-500 text-xs'>Diverifikasi oleh AI ✓</span>` 
+                    : upload.status === 'pending'
+                    ? `<span class='text-yellow-500 text-xs'>Menunggu verifikasi ⚠️</span>`
+                    : `<span class='text-red-500 text-xs'>Tidak terverifikasi oleh AI ⚠️</span>`;
 
                 const priceText = upload.price > 0
                     ? `Rp ${new Intl.NumberFormat('id-ID').format(upload.price)}`
@@ -174,8 +188,7 @@
                 container.append(card);
             });
         },
-        error: function (xhr, status, error) {
-            console.error("Error fetching materials:", error);
+        error: function () {
             $("#uploads-container").html(`<p class="text-red-500 italic col-span-3 text-center">Gagal memuat data</p>`);
         }
     });

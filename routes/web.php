@@ -48,3 +48,18 @@ Route::get('categories',[CategoryController::class, 'index'])->name('category.in
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
+
+// jika pakai controller MaterialController
+
+Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materials.show');
+
+
+Route::get('/materials/test/{id}', function($id) {
+    $material = \App\Models\Material::find($id);
+    if(!$material) return abort(404, 'Material not found');
+    return view('materials.show', ['material' => $material, 'downloadCount' => 0, 'likes'=>0, 'dislikes'=>0]);
+});
+
+
+Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materials.show');
+
