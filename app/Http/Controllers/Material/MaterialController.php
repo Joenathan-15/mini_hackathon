@@ -54,6 +54,9 @@ class MaterialController extends Controller
             'price.numeric' => 'harga harus berupa angka.',
         ]);
 
+
+
+
         // Simpan file ke storage
         $filePath = $request->file('file_path')->store('materials');
 
