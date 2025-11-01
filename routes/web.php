@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Material\MaterialController;
+use App\Http\Controllers\ProfileController;
 use App\Models\Material;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +30,11 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard', compact('soldCount', 'income', 'uploadCount'));
     })->name('dashboard');
 
-    Route::view('/profile', 'profile')->name('profile');
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+
     Route::post("/logout", [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/material-purchases', [MaterialController::class, 'getPurchasesMaterial'])->name('material.purchases.index');
