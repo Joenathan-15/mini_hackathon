@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+@section('body')
 <div class="min-h-screen flex flex-col bg-gradient-to-b from-yellow-100 via-white to-white">
 
     <!-- Navbar -->
