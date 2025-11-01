@@ -13,7 +13,6 @@ return new class extends Migration {
             $table->integer("collage_year")->default(1);
             $table->string('major')->nullable();
             $table->decimal('balance', 10, 2)->default(0);
-            $table->text('bio')->nullable();
             $table->timestamps();
         });
     }
