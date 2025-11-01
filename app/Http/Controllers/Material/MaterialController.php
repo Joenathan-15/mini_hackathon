@@ -90,4 +90,13 @@ class MaterialController extends Controller
 
         return response()->json($materials);
     }
+
+    public function getMaterials(Request $request){
+        $search = $request->query('search');
+        $materials = Material::with('details', "categories")->when($search, function ($query, $search) {
+            return $query->where('title', 'like', '%' . $search . '%')
+                         ->orWhere('description', 'like', '%' . $search . '%');
+        })->get();
+        return response()->json($materials);
+    }
 }

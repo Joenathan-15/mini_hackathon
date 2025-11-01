@@ -33,9 +33,16 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/material-purchases', [MaterialController::class, 'getPurchasesMaterial'])->name('material.purchases.index');
     Route::view('/upload', 'upload')->name('materials.create');
-    Route::get('/materials', [MaterialController::class, 'index'])->name('materials.index');
+    Route::get('/my-materials', [MaterialController::class, 'index'])->name('materials.index');
+    Route::get('/materials', [MaterialController::class, 'getMaterials'])->name('materials.get');
     Route::post('/material', [MaterialController::class, 'store'])->name('material.store');
 });
+
+Route::get('/explore', function () {
+    $materi = collect([]); // data kosong dulu biar gak error
+    return view('explore', compact('materi'));
+})->name('explore');
+
 
 Route::get('/', function () {
     return view('landing');
