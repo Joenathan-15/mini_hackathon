@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+@section('body')
 <div class="min-h-screen bg-gradient-to-br from-yellow-50 to-white py-10">
     <div class="container mx-auto px-8">
 
