@@ -29,12 +29,6 @@
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
         </a>
         @endguest
-        @auth
-        <a href="{{url("/dashboard")}}" class="relative group">
-            <span class="transition-colors group-hover:text-primary">Beranda</span>
-            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-        </a>
-        @endauth
         <a href="{{url("/explore")}}" class="relative group">
             <span class="transition-colors group-hover:text-primary">Jelajahi</span>
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>

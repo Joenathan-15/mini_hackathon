@@ -44,6 +44,15 @@
 <script>
     $(document).ready(function () {
 
+    const icons = {
+        pdf: "https://img.icons8.com/color/96/pdf.png",
+        doc: "https://img.icons8.com/color/96/ms-word.png",
+        docx: "https://img.icons8.com/color/96/ms-word.png",
+        ppt: "https://img.icons8.com/color/96/ms-powerpoint.png",
+        pptx: "https://img.icons8.com/color/96/ms-powerpoint.png",
+        default: "https://img.icons8.com/ios-filled/100/document--v1.png"
+    };
+
     // === Fetch Riwayat Pembelian ===
     $.ajax({
         url: "{{ route('material.purchases.index') }}",
@@ -59,33 +68,42 @@
             }
 
             response.forEach(item => {
-                const isPdf = item.file_name.endsWith('.pdf');
-                const isWord = item.file_name.endsWith('.docx') || item.file_name.endsWith('.doc');
-
-                const iconUrl = isPdf
-                    ? "{{ asset('images/pdf-icon.svg') }}"
-                    : isWord
-                        ? "{{ asset('images/word-icon.svg') }}"
-                        : "https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg";
+                const ext = item.file_name.split('.').pop().toLowerCase();
+                const iconUrl = icons[ext] || icons.default;
 
                 const priceText = item.price > 0
-                    ? `<span class='bg-yellow-400 text-white px-4 py-1 rounded-full text-sm font-semibold'>
-                        Rp ${new Intl.NumberFormat('id-ID').format(item.price)}
-                       </span>`
-                    : `<span class='bg-green-400 text-white px-4 py-1 rounded-full text-sm font-semibold'>Gratis</span>`;
+                    ? `Rp ${new Intl.NumberFormat('id-ID').format(item.price)}`
+                    : 'Gratis';
+
+                const status = `
+                    <span class="bg-yellow-400 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        ${item.status ?? 'Selesai'}
+                    </span>
+                `;
 
                 const card = `
-                    <div class="border-2 border-red-200 rounded-2xl p-5 shadow hover:shadow-lg transition bg-white">
-                        <div class="flex justify-center mb-4">
-                            <img src="${iconUrl}" alt="File Icon" class="w-16 h-16">
+                    <div class="bg-white border rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden">
+                        <div class="flex justify-center items-center h-40 bg-white">
+                            <img src="${iconUrl}" alt="File Icon" class="w-20 h-20 object-contain">
                         </div>
-                        <h3 class="text-lg font-bold text-gray-800 text-center">${item.title}</h3>
-                        <p class="text-gray-500 text-sm mt-2 text-center">${item.description?.substring(0, 70) ?? ''}</p>
-                        <div class="flex justify-center mt-4">${priceText}</div>
-                        <div class="text-center mt-5">
-                            <a href="/materi/${item.id}" class="bg-yellow-400 text-white px-6 py-2 rounded-lg hover:bg-yellow-500 transition font-semibold">
-                                Lihat Detail
-                            </a>
+                        <div class="border-t border-gray-200"></div>
+                        <div class="p-4 relative">
+                            <div class="absolute top-3 right-4">${status}</div>
+                            <div class="mb-4">
+                                <h3 class="text-gray-800 font-semibold text-lg">${item.title}</h3>
+                                <p class="text-xs text-gray-500 mt-1">${item.category?.name ?? '-'}</p>
+                            </div>
+                            <div class="flex items-center justify-between mt-6">
+                                <span class="text-green-500 font-medium text-sm">${priceText}</span>
+                                <a href="/materi/${item.id}" class="flex items-center gap-3 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded-full transition">
+                                    <span class="w-7 h-7 bg-yellow-600 rounded-full flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m6 0l-3-3m3 3l-3 3" />
+                                        </svg>
+                                    </span>
+                                    <span class="text-sm">Lihat Detail</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -113,42 +131,48 @@
                 return;
             }
 
-        response.forEach(upload => {
+            response.forEach(upload => {
+                const ext = upload.file_name.split('.').pop().toLowerCase();
+                const iconUrl = icons[ext] || icons.default;
 
-    const icons = {
-        pdf: "https://img.icons8.com/color/96/pdf.png",
-        doc: "https://img.icons8.com/color/96/ms-word.png",
-        docx: "https://img.icons8.com/color/96/ms-word.png",
-        ppt: "https://img.icons8.com/color/96/ms-powerpoint.png",
-        pptx: "https://img.icons8.com/color/96/ms-powerpoint.png",
-    };
+                const priceText = upload.price > 0
+                    ? `Rp ${new Intl.NumberFormat('id-ID').format(upload.price)}`
+                    : 'Gratis';
 
-    const ext = upload.file_name.toLowerCase().split(".").pop();
-    console.log("Ekstensi:", ext);
+                const status = `
+                    <span class="bg-green-400 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        Diunggah
+                    </span>
+                `;
 
-    const iconUrl = icons[ext] ?? "https://img.icons8.com/color/96/file.png";
-
-    const priceText = upload.price > 0
-        ? `Rp ${new Intl.NumberFormat('id-ID').format(upload.price)}`
-        : 'Gratis';
-
-    const card = `
-        <div class="bg-white border rounded-xl p-4 flex flex-col shadow hover:shadow-lg transition">
-            <div class="flex justify-center mb-4">
-                <img src="${iconUrl}" alt="File" class="w-12 h-12 object-contain">
-            </div>
-            <h3 class="text-gray-700 font-semibold text-lg">${upload.title}</h3>
-            <p class="text-sm text-gray-500 mb-2">${upload.category?.name ?? '-'}</p>
-            <p class="text-gray-700 text-sm flex-grow">${upload.description?.substring(0, 60) ?? ''}</p>
-            <p class="text-right mt-3 font-bold text-yellow-500">${priceText}</p>
-        </div>
-    `;
-
-    $("#uploads-container").append(card);
-    });
-
-
-
+                const card = `
+                    <div class="bg-white border rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden">
+                        <div class="flex justify-center items-center h-40 bg-white">
+                            <img src="${iconUrl}" alt="File Icon" class="w-20 h-20 object-contain">
+                        </div>
+                        <div class="border-t border-gray-200"></div>
+                        <div class="p-4 relative">
+                            <div class="absolute top-3 right-4">${status}</div>
+                            <div class="mb-4">
+                                <h3 class="text-gray-800 font-semibold text-lg">${upload.title}</h3>
+                                <p class="text-xs text-gray-500 mt-1">${upload.category?.name ?? '-'}</p>
+                            </div>
+                            <div class="flex items-center justify-between mt-6">
+                                <span class="text-green-500 font-medium text-sm">${priceText}</span>
+                                <a href="/materi/${upload.id}" class="flex items-center gap-3 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded-full transition">
+                                    <span class="w-7 h-7 bg-yellow-600 rounded-full flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m6 0l-3-3m3 3l-3 3" />
+                                        </svg>
+                                    </span>
+                                    <span class="text-sm">Lihat Detail</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.append(card);
+            });
         },
         error: function (xhr, status, error) {
             console.error("Error fetching materials:", error);

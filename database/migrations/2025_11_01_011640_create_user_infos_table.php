@@ -10,7 +10,8 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->integer('exp')->default(0);
             $table->string('username');
-            $table->date('birth_date')->nullable();
+            $table->integer("collage_year")->default(1);
+            $table->string('major')->nullable();
             $table->decimal('balance', 10, 2)->default(0);
             $table->text('bio')->nullable();
             $table->timestamps();
