@@ -42,8 +42,8 @@
 
         <!-- Tampilkan Upload di center hanya jika sudah login -->
         @auth
-        <a href="{{url("/upload")}}" class="relative group">
-            <span class="transition-colors group-hover:text-primary">Upload</span>
+        <a href="{{url("/dashboard")}}" class="relative group">
+            <span class="transition-colors group-hover:text-primary">Dashboard</span>
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
         </a>
         @endauth
@@ -152,14 +152,14 @@
 
         <!-- Tampilkan Upload di mobile hanya jika sudah login -->
         @auth
-        <a href="{{url("/upload")}}"
+        <a href="{{url("/dashboard")}}"
             class="py-3 rounded-xl hover:bg-base-200 transition-all flex flex-col items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 text-primary" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
-            Upload
+            Dashboard
         </a>
         @endauth
 
