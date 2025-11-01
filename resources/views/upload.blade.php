@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+@section('body')
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-white">
     <div id="dropZoneSection" class="w-full max-w-3xl text-center p-10">
         <h1 class="text-2xl font-bold text-gray-700 mb-8">Unggah Catatan atau Jurnal</h1>
