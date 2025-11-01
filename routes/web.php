@@ -28,7 +28,7 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard', compact('soldCount', 'income', 'uploadCount'));
     })->name('dashboard');
 
-    Route::view('/profile', 'pages.profile')->name('profile');
+    Route::view('/profile', 'profile')->name('profile');
     Route::post("/logout", [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/material-purchases', [MaterialController::class, 'getPurchasesMaterial'])->name('material.purchases.index');
@@ -40,8 +40,3 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
-
-
-Route::get('/profile', function () {
-    return view('profile');
-})->name('profile');

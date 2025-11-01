@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -10,10 +11,17 @@ class UserInfo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'exp', 'username', 'birth_date', 'balance', 'bio'
+        'user_id',
+        'exp',
+        'username',
+        'birth_date',
+        'balance',
+        'collage_year',
+        'major'
     ];
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 }

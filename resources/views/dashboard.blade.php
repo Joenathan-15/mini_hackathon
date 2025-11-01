@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section("title","")
 @section('body')
 <div class="min-h-screen bg-linear-to-br from-yellow-50 to-white py-10">
     <div class="container mx-auto px-8">
@@ -41,9 +41,17 @@
 @endsection
 
 @section("script")
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-$(document).ready(function () {
+    $(document).ready(function () {
+
+    const icons = {
+        pdf: "https://img.icons8.com/color/96/pdf.png",
+        doc: "https://img.icons8.com/color/96/ms-word.png",
+        docx: "https://img.icons8.com/color/96/ms-word.png",
+        ppt: "https://img.icons8.com/color/96/ms-powerpoint.png",
+        pptx: "https://img.icons8.com/color/96/ms-powerpoint.png",
+        default: "https://img.icons8.com/ios-filled/100/document--v1.png"
+    };
 
     // === Fetch Riwayat Pembelian ===
     $.ajax({
@@ -60,10 +68,18 @@ $(document).ready(function () {
             }
 
             response.forEach(item => {
-                const isPdf = item.file_name.endsWith('.pdf');
-                const iconUrl = isPdf
-                    ? "https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg"
-                    : "https://upload.wikimedia.org/wikipedia/commons/4/4f/Microsoft_Word_icon_%282019–present%29.svg";
+                const ext = item.file_name.split('.').pop().toLowerCase();
+                const iconUrl = icons[ext] || icons.default;
+
+                const priceText = item.price > 0
+                    ? `Rp ${new Intl.NumberFormat('id-ID').format(item.price)}`
+                    : 'Gratis';
+
+                const status = `
+                    <span class="bg-yellow-400 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        ${item.status ?? 'Selesai'}
+                    </span>
+                `;
 
                 const status = item.status === 'verified' 
                     ? `<span class='text-green-500 text-xs'>Diverifikasi oleh AI ✓</span>` 
@@ -76,22 +92,28 @@ $(document).ready(function () {
                     : 'Gratis';
 
                 const card = `
-                    <div class="border-2 border-red-500 rounded-xl p-4 bg-white shadow hover:shadow-lg transition flex flex-col">
-                        <div class="flex justify-center mb-3">
-                            <img src="${iconUrl}" alt="File" class="w-16">
+                    <div class="bg-white border rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden">
+                        <div class="flex justify-center items-center h-40 bg-white">
+                            <img src="${iconUrl}" alt="File Icon" class="w-20 h-20 object-contain">
                         </div>
-                        <div class="text-center mb-2">
-                            <h3 class="font-semibold text-gray-800 text-sm">${item.title}</h3>
-                            <p class="text-xs text-gray-500">${item.category?.name ?? '-'}</p>
-                        </div>
-                        <div class="flex justify-between items-center mt-auto">
-                            <div>
-                                <p class="text-green-500 text-xs">${priceText}</p>
-                                ${status}
+                        <div class="border-t border-gray-200"></div>
+                        <div class="p-4 relative">
+                            <div class="absolute top-3 right-4">${status}</div>
+                            <div class="mb-4">
+                                <h3 class="text-gray-800 font-semibold text-lg">${item.title}</h3>
+                                <p class="text-xs text-gray-500 mt-1">${item.category?.name ?? '-'}</p>
                             </div>
-                            <button class="bg-yellow-400 hover:bg-yellow-500 text-white text-xs px-4 py-1.5 rounded-full flex items-center gap-1">
-                                <i class="fa fa-download"></i> Unduh
-                            </button>
+                            <div class="flex items-center justify-between mt-6">
+                                <span class="text-green-500 font-medium text-sm">${priceText}</span>
+                                <a href="/materi/${item.id}" class="flex items-center gap-3 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded-full transition">
+                                    <span class="w-7 h-7 bg-yellow-600 rounded-full flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m6 0l-3-3m3 3l-3 3" />
+                                        </svg>
+                                    </span>
+                                    <span class="text-sm">Lihat Detail</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -118,10 +140,8 @@ $(document).ready(function () {
             }
 
             response.forEach(upload => {
-                const isPdf = upload.file_name.endsWith('.pdf');
-                const iconUrl = isPdf
-                    ? "https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg"
-                    : "https://upload.wikimedia.org/wikipedia/commons/4/4f/Microsoft_Word_icon_%282019–present%29.svg";
+                const ext = upload.file_name.split('.').pop().toLowerCase();
+                const iconUrl = icons[ext] || icons.default;
 
                 const status = upload.status === 'verified' 
                     ? `<span class='text-green-500 text-xs'>Diverifikasi oleh AI ✓</span>` 
@@ -133,7 +153,13 @@ $(document).ready(function () {
                     ? `Rp ${new Intl.NumberFormat('id-ID').format(upload.price)}`
                     : 'Gratis';
 
-const card = `
+                const status = `
+                    <span class="bg-green-400 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        Diunggah
+                    </span>
+                `;
+
+                const card = `
                     <div class="bg-white border rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden">
                         <div class="flex justify-center items-center h-40 bg-white">
                             <img src="${iconUrl}" alt="File Icon" class="w-20 h-20 object-contain">
@@ -147,14 +173,14 @@ const card = `
                             </div>
                             <div class="flex items-center justify-between mt-6">
                                 <span class="text-green-500 font-medium text-sm">${priceText}</span>
-                                <button class="flex items-center gap-3 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded-full transition">
+                                <a href="/materi/${upload.id}" class="flex items-center gap-3 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded-full transition">
                                     <span class="w-7 h-7 bg-yellow-600 rounded-full flex items-center justify-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m6 0l-3-3m3 3l-3 3" />
                                         </svg>
                                     </span>
-                                    <span class="text-sm">Unduh</span>
-                                </button>
+                                    <span class="text-sm">Lihat Detail</span>
+                                </a>
                             </div>
                         </div>
                     </div>
