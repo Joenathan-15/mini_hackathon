@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section("title","Dashboard")
 @section('body')
 <div class="min-h-screen bg-linear-to-br from-yellow-50 to-white py-10">
     <div class="container mx-auto px-8">
