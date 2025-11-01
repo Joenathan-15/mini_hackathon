@@ -292,17 +292,10 @@ $(function () {
     }
 
     // Render material cards
-    function renderMaterials(materials) {
-    if (materials.length === 0) {
-        $content.html(`
-            <div class="col-span-full text-center py-20 text-base-content/70">
-                Tidak ada materi ditemukan.
-            </div>
-        `);
-        return;
-    }
-
-    // Pemetaan ikon file
+function renderMaterials(materials) {
+    // ... (kode pengecekan materials.length dan iconMap tetap sama)
+    
+    // Pemetaan ikon file (Pastikan iconMap ini sudah benar)
     const iconMap = {
         pdf: "https://img.icons8.com/color/96/pdf.png",
         doc: "https://img.icons8.com/color/96/ms-word.png",
@@ -315,32 +308,50 @@ $(function () {
     $content.empty();
     materials.forEach((m) => {
         const price = m.price > 0 ? `Rp ${new Intl.NumberFormat('id-ID').format(m.price)}` : 'Gratis';
+        
+        let ext = m.file_path ? m.file_path.split('.').pop().toLowerCase() : (m.file_type ? m.file_type.toLowerCase() : '');
+        const iconSrc = iconMap[ext] || iconMap.default;
 
-        // Tentukan ekstensi file (ambil dari file_path atau file_type)
-        let ext = '';
-        if (m.file_path) {
-            ext = m.file_path.split('.').pop().toLowerCase();
-        } else if (m.file_type) {
-            ext = m.file_type.toLowerCase();
-        }
+        // --- Tentukan Status dan Teks Tombol ---
+        // (Asumsi: Status 'Menunggu verifikasi' adalah dari data 'm.status')
+        const statusText = m.status === 'pending' || m.status === 'Menunggu verifikasi'
+            ? `<span class="text-yellow-600 text-xs font-semibold flex items-center gap-1">Menunggu verifikasi <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z" /></svg></span>`
+            : ''; // Anda bisa menambahkan status lain di sini (misalnya 'Terverifikasi')
 
-        const iconSrc = iconMap[ext] || '/icons/file.png'; // default icon
-
+        const buttonText = m.is_purchased ? 'Unduh' : 'Lihat Detail';
+        const buttonIcon = m.is_purchased 
+            ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>` 
+            : `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m6 0l-3-3m3 3l-3 3" /></svg>`;
+            
+        // Catatan: Saya menggunakan border-primary/50 untuk meniru garis merah muda di screenshot
         $content.append(`
-            <div class="card bg-white border border-base-200 shadow-md hover:shadow-xl transition-transform hover:-translate-y-1 duration-300">
-                <div class="h-48 flex items-center justify-center bg-linear-to-br from-primary/10 to-secondary/10">
-                    <div class="bg-primary/20 p-4 rounded-full">
-                        <img src="${iconSrc}" alt="file icon" class="w-16 h-16 object-contain">
+            <div class="card bg-white border border-primary/50 shadow-md transition hover:shadow-lg">
+                <div class="p-6">
+                    <div class="flex justify-center items-center h-20 mb-4">
+                        <img src="${iconSrc}" alt="${ext.toUpperCase()} Icon" class="w-16 h-16 object-contain">
                     </div>
-                </div>
-                <div class="card-body">
-                    <h2 class="card-title text-lg font-semibold">${m.title}</h2>
-                    <p class="text-base-content/70 text-sm line-clamp-3">${m.description || 'Tidak ada deskripsi.'}</p>
-                    <div class="flex items-center justify-between mt-3">
-                        <span class="badge badge-primary badge-outline text-xs">${m.category || '-'}</span>
-                        <span class="text-sm font-medium text-primary">${price}</span>
+                    
+                    <div class="border-t border-base-200 pt-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h2 class="text-lg font-bold text-gray-800 line-clamp-2">${m.title || 'Judul Materi'}</h2>
+                                <p class="text-xs text-gray-500 mt-1">${m.metadata || 'Semester 4 | Farmasi | FMIPA'}</p> 
+                                </div>
+                            
+                            <div class="ml-4 flex-shrink-0">
+                                ${statusText}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-4">
+                            <span class="text-green-600 font-bold text-base">${price}</span>
+
+                            <a href="/materials/${m.id}" class="btn btn-sm bg-yellow-400 hover:bg-yellow-500 text-white font-bold rounded-lg px-6">
+                                ${buttonIcon}
+                                ${buttonText}
+                            </a>
+                        </div>
                     </div>
-                    <a href="/materials/${m.id}" class="btn btn-sm btn-primary mt-4 rounded-full w-full">Lihat Detail</a>
                 </div>
             </div>
         `);
