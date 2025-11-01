@@ -13,12 +13,15 @@
         <div class="grid grid-cols-3 gap-6 mb-12 text-center">
             <div class="bg-white shadow rounded-xl p-6">
                 <p class="text-gray-500 text-sm">Materi Terjual</p>
+                <p class="text-3xl font-bold text-yellow-500">{{ $soldCount }}</p>
             </div>
             <div class="bg-white shadow rounded-xl p-6">
                 <p class="text-gray-500 text-sm">Pendapatan</p>
+                <p class="text-3xl font-bold text-yellow-500">Rp{{ number_format($income, 0, ',', '.') }}</p>
             </div>
             <div class="bg-white shadow rounded-xl p-6">
                 <p class="text-gray-500 text-sm">Jumlah Upload</p>
+                <p class="text-3xl font-bold text-yellow-500">{{ $uploadCount }}</p>
             </div>
         </div>
 
@@ -40,7 +43,7 @@
 @section("script")
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-$(document).ready(function () {
+    $(document).ready(function () {
     $.ajax({
         url: "{{ route('materials.index') }}", // adjust if needed
         type: "GET",
