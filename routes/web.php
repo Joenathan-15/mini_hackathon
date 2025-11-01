@@ -39,6 +39,10 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::get('/materials', [MaterialController::class, 'getMaterials'])->name('materials.get');
 
+Route::get('/detail', function () {
+    return view('detail');
+})->name('detail');
+
 Route::get('/explore', function () {
     return view('explore');
 })->name('explore');

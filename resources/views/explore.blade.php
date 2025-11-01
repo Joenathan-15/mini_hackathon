@@ -89,6 +89,150 @@
     </div>
 </section>
 
+@section("script")
+<script>
+    $(document).ready(function () {
+
+    const icons = {
+        pdf: "https://img.icons8.com/color/96/pdf.png",
+        doc: "https://img.icons8.com/color/96/ms-word.png",
+        docx: "https://img.icons8.com/color/96/ms-word.png",
+        ppt: "https://img.icons8.com/color/96/ms-powerpoint.png",
+        pptx: "https://img.icons8.com/color/96/ms-powerpoint.png",
+        default: "https://img.icons8.com/ios-filled/100/document--v1.png"
+    };
+
+    // === Fetch Riwayat Pembelian ===
+    $.ajax({
+        url: "{{ route('material.purchases.index') }}",
+        type: "GET",
+        dataType: "json",
+        success: function (response) {
+            const container = $("#purchases-container");
+            container.empty();
+
+            if (!response || response.length === 0) {
+                container.append(`<p class="text-gray-500 italic col-span-3 text-center">Belum ada pembelian</p>`);
+                return;
+            }
+
+            response.forEach(item => {
+                const ext = item.file_name.split('.').pop().toLowerCase();
+                const iconUrl = icons[ext] || icons.default;
+
+                const priceText = item.price > 0
+                    ? `Rp ${new Intl.NumberFormat('id-ID').format(item.price)}`
+                    : 'Gratis';
+
+                const status = `
+                    <span class="bg-yellow-400 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        ${item.status ?? 'Selesai'}
+                    </span>
+                `;
+
+                const card = `
+                    <div class="bg-white border rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden">
+                        <div class="flex justify-center items-center h-40 bg-white">
+                            <img src="${iconUrl}" alt="File Icon" class="w-20 h-20 object-contain">
+                        </div>
+                        <div class="border-t border-gray-200"></div>
+                        <div class="p-4 relative">
+                            <div class="absolute top-3 right-4">${status}</div>
+                            <div class="mb-4">
+                                <h3 class="text-gray-800 font-semibold text-lg">${item.title}</h3>
+                                <p class="text-xs text-gray-500 mt-1">${item.category?.name ?? '-'}</p>
+                            </div>
+                            <div class="flex items-center justify-between mt-6">
+                                <span class="text-green-500 font-medium text-sm">${priceText}</span>
+                                <a href="/materi/${item.id}" class="flex items-center gap-3 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded-full transition">
+                                    <span class="w-7 h-7 bg-yellow-600 rounded-full flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m6 0l-3-3m3 3l-3 3" />
+                                        </svg>
+                                    </span>
+                                    <span class="text-sm">Lihat Detail</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.append(card);
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching purchases:", error);
+            $("#purchases-container").html(`<p class="text-red-500 italic col-span-3 text-center">Gagal memuat data</p>`);
+        }
+    });
+
+
+    // === Fetch Materi Diunggah ===
+    $.ajax({
+        url: "{{ route('materials.index') }}",
+        type: "GET",
+        dataType: "json",
+        success: function (response) {
+            const container = $("#uploads-container");
+            container.empty();
+
+            if (!response || response.length === 0) {
+                container.append(`<p class="text-gray-500 italic col-span-3 text-center">Belum ada materi yang diunggah</p>`);
+                return;
+            }
+
+            response.forEach(upload => {
+                const ext = upload.file_name.split('.').pop().toLowerCase();
+                const iconUrl = icons[ext] || icons.default;
+
+                const priceText = upload.price > 0
+                    ? `Rp ${new Intl.NumberFormat('id-ID').format(upload.price)}`
+                    : 'Gratis';
+
+                const status = `
+                    <span class="bg-green-400 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        Diunggah
+                    </span>
+                `;
+
+                const card = `
+                    <div class="bg-white border rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden">
+                        <div class="flex justify-center items-center h-40 bg-white">
+                            <img src="${iconUrl}" alt="File Icon" class="w-20 h-20 object-contain">
+                        </div>
+                        <div class="border-t border-gray-200"></div>
+                        <div class="p-4 relative">
+                            <div class="absolute top-3 right-4">${status}</div>
+                            <div class="mb-4">
+                                <h3 class="text-gray-800 font-semibold text-lg">${upload.title}</h3>
+                                <p class="text-xs text-gray-500 mt-1">${upload.category?.name ?? '-'}</p>
+                            </div>
+                            <div class="flex items-center justify-between mt-6">
+                                <span class="text-green-500 font-medium text-sm">${priceText}</span>
+                                <a href="/materi/${upload.id}" class="flex items-center gap-3 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded-full transition">
+                                    <span class="w-7 h-7 bg-yellow-600 rounded-full flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m6 0l-3-3m3 3l-3 3" />
+                                        </svg>
+                                    </span>
+                                    <span class="text-sm">Lihat Detail</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.append(card);
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching materials:", error);
+            $("#uploads-container").html(`<p class="text-red-500 italic col-span-3 text-center">Gagal memuat data</p>`);
+        }
+    });
+
+});
+</script>
+@endsection
+
 <script>
 $(function () {
     const $input = $('#category-filter');
@@ -149,42 +293,60 @@ $(function () {
 
     // Render material cards
     function renderMaterials(materials) {
-        if (materials.length === 0) {
-            $content.html(`
-                <div class="col-span-full text-center py-20 text-base-content/70">
-                    Tidak ada materi ditemukan.
-                </div>
-            `);
-            return;
+    if (materials.length === 0) {
+        $content.html(`
+            <div class="col-span-full text-center py-20 text-base-content/70">
+                Tidak ada materi ditemukan.
+            </div>
+        `);
+        return;
+    }
+
+    // Pemetaan ikon file
+    const iconMap = {
+        pdf: "https://img.icons8.com/color/96/pdf.png",
+        doc: "https://img.icons8.com/color/96/ms-word.png",
+        docx: "https://img.icons8.com/color/96/ms-word.png",
+        ppt: "https://img.icons8.com/color/96/ms-powerpoint.png",
+        pptx: "https://img.icons8.com/color/96/ms-powerpoint.png",
+        default: "https://img.icons8.com/ios-filled/100/document--v1.png"
+    };
+
+    $content.empty();
+    materials.forEach((m) => {
+        const price = m.price > 0 ? `Rp ${new Intl.NumberFormat('id-ID').format(m.price)}` : 'Gratis';
+
+        // Tentukan ekstensi file (ambil dari file_path atau file_type)
+        let ext = '';
+        if (m.file_path) {
+            ext = m.file_path.split('.').pop().toLowerCase();
+        } else if (m.file_type) {
+            ext = m.file_type.toLowerCase();
         }
 
-        $content.empty();
-        materials.forEach((m) => {
-            const price = m.price > 0 ? `Rp ${new Intl.NumberFormat('id-ID').format(m.price)}` : 'Gratis';
-            $content.append(`
-                <div class="card bg-white border border-base-200 shadow-md hover:shadow-xl transition-transform hover:-translate-y-1 duration-300">
-                    <div class="h-48 flex items-center justify-center bg-linear-to-br from-primary/10 to-secondary/10">
-                        <div class="bg-primary/20 p-4 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-primary" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h2 class="card-title text-lg font-semibold">${m.title}</h2>
-                        <p class="text-base-content/70 text-sm line-clamp-3">${m.description || 'Tidak ada deskripsi.'}</p>
-                        <div class="flex items-center justify-between mt-3">
-                            <span class="badge badge-primary badge-outline text-xs">${m.category || '-'}</span>
-                            <span class="text-sm font-medium text-primary">${price}</span>
-                        </div>
-                        <a href="/materials/${m.id}" class="btn btn-sm btn-primary mt-4 rounded-full w-full">Lihat Detail</a>
+        const iconSrc = iconMap[ext] || '/icons/file.png'; // default icon
+
+        $content.append(`
+            <div class="card bg-white border border-base-200 shadow-md hover:shadow-xl transition-transform hover:-translate-y-1 duration-300">
+                <div class="h-48 flex items-center justify-center bg-linear-to-br from-primary/10 to-secondary/10">
+                    <div class="bg-primary/20 p-4 rounded-full">
+                        <img src="${iconSrc}" alt="file icon" class="w-16 h-16 object-contain">
                     </div>
                 </div>
-            `);
-        });
-    }
+                <div class="card-body">
+                    <h2 class="card-title text-lg font-semibold">${m.title}</h2>
+                    <p class="text-base-content/70 text-sm line-clamp-3">${m.description || 'Tidak ada deskripsi.'}</p>
+                    <div class="flex items-center justify-between mt-3">
+                        <span class="badge badge-primary badge-outline text-xs">${m.category || '-'}</span>
+                        <span class="text-sm font-medium text-primary">${price}</span>
+                    </div>
+                    <a href="/materials/${m.id}" class="btn btn-sm btn-primary mt-4 rounded-full w-full">Lihat Detail</a>
+                </div>
+            </div>
+        `);
+    });
+}
+
 
     // Autocomplete logic
     function refreshList(showAll = false) {
