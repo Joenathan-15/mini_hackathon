@@ -34,9 +34,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/material-purchases', [MaterialController::class, 'getPurchasesMaterial'])->name('material.purchases.index');
     Route::view('/upload', 'upload')->name('materials.create');
     Route::get('/my-materials', [MaterialController::class, 'index'])->name('materials.index');
-    Route::get('/materials', [MaterialController::class, 'getMaterials'])->name('materials.get');
     Route::post('/material', [MaterialController::class, 'store'])->name('material.store');
 });
+Route::get('/materials', [MaterialController::class, 'getMaterials'])->name('materials.get');
 
 Route::get('/explore', function () {
     $materi = collect([]); // data kosong dulu biar gak error
