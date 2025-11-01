@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Material;
 use App\Models\MaterialDetail;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,5 +77,17 @@ class MaterialController extends Controller
         }
 
         return redirect()->route('dashboard')->with('success', 'Materi berhasil diunggah!');
+    }
+
+    public function getPurchasesMaterial()
+    {
+        $materials = Transaction::with('material')
+            ->where('customer_id', Auth::id())
+            ->get()
+            ->map(function ($transaction) {
+                return $transaction->material;
+            });
+
+        return response()->json($materials);
     }
 }

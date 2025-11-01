@@ -27,14 +27,14 @@
 
         <!-- Riwayat Pembelian -->
         <h2 class="text-xl font-semibold text-gray-700 mb-4">Riwayat Pembelian</h2>
-        <div class="grid md:grid-cols-3 gap-6 mb-10">
-            <p class="text-gray-500 italic col-span-3 text-center">Belum ada pembelian</p>
+        <div id="purchases-container" class="grid md:grid-cols-3 gap-6 mb-10">
+            <p class="text-gray-500 italic col-span-3 text-center" id="loading-purchase">Memuat data...</p>
         </div>
 
         <!-- Materi Diunggah -->
         <h2 class="text-xl font-semibold text-gray-700 mb-4">Materi Diunggah</h2>
         <div id="uploads-container" class="grid md:grid-cols-3 gap-6">
-            <p class="text-gray-500 italic col-span-3 text-center" id="loading">Memuat data...</p>
+            <p class="text-gray-500 italic col-span-3 text-center" id="loading-upload">Memuat data...</p>
         </div>
     </div>
 </div>
@@ -43,9 +43,52 @@
 @section("script")
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-    $(document).ready(function () {
+$(document).ready(function () {
+
+    // === Fetch Riwayat Pembelian ===
     $.ajax({
-        url: "{{ route('materials.index') }}", // adjust if needed
+        url: "{{ route('material.purchases.index') }}", // Adjust if needed
+        type: "GET",
+        dataType: "json",
+        success: function (response) {
+            const container = $("#purchases-container");
+            container.empty();
+
+            if (!response || response.length === 0) {
+                container.append(`<p class="text-gray-500 italic col-span-3 text-center">Belum ada pembelian</p>`);
+                return;
+            }
+
+            response.forEach(item => {
+                const isPdf = item.file_name.endsWith('.pdf');
+                const iconUrl = isPdf
+                    ? "https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg"
+                    : "https://upload.wikimedia.org/wikipedia/commons/4/4f/Microsoft_Word_icon_%282019–present%29.svg";
+
+                const card = `
+                    <div class="bg-white border rounded-xl p-4 flex flex-col shadow hover:shadow-lg transition">
+                        <div class="flex justify-center mb-4">
+                            <img src="${iconUrl}" alt="File" class="w-12">
+                        </div>
+                        <h3 class="text-gray-700 font-semibold text-lg">${item.title}</h3>
+                        <p class="text-sm text-gray-500 mb-2">${item.category?.name ?? '-'}</p>
+                        <p class="text-gray-700 text-sm flex-grow">${item.description?.substring(0, 60) ?? ''}</p>
+                        <p class="text-right mt-3 font-bold text-yellow-500">Rp ${new Intl.NumberFormat('id-ID').format(item.price)}</p>
+                    </div>
+                `;
+                container.append(card);
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching purchases:", error);
+            $("#purchases-container").html(`<p class="text-red-500 italic col-span-3 text-center">Gagal memuat data</p>`);
+        }
+    });
+
+
+    // === Fetch Materi Diunggah ===
+    $.ajax({
+        url: "{{ route('materials.index') }}",
         type: "GET",
         dataType: "json",
         success: function (response) {
@@ -86,6 +129,7 @@
             $("#uploads-container").html(`<p class="text-red-500 italic col-span-3 text-center">Gagal memuat data</p>`);
         }
     });
+
 });
 </script>
 @endsection
