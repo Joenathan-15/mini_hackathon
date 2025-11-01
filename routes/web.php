@@ -18,6 +18,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post("/logout", [AuthController::class, 'logout'])->name('logout');
 });
 
+Route::get('/explore', function () {
+    $materi = collect([]); // data kosong dulu biar gak error
+    return view('pages.explore', compact('materi'));
+})->name('explore');
+
+
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
