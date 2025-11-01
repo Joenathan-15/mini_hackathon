@@ -54,29 +54,42 @@ $(document).ready(function () {
                 return;
             }
 
-            response.forEach(upload => {
-                const isPdf = upload.file_name.endsWith('.pdf');
-                const iconUrl = isPdf
-                    ? "https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg"
-                    : "https://upload.wikimedia.org/wikipedia/commons/4/4f/Microsoft_Word_icon_%282019–present%29.svg";
+        response.forEach(upload => {
 
-                const priceText = upload.price > 0
-                    ? `Rp ${new Intl.NumberFormat('id-ID').format(upload.price)}`
-                    : 'Gratis';
+    const icons = {
+        pdf: "https://img.icons8.com/color/96/pdf.png",
+        doc: "https://img.icons8.com/color/96/ms-word.png",
+        docx: "https://img.icons8.com/color/96/ms-word.png",
+        ppt: "https://img.icons8.com/color/96/ms-powerpoint.png",
+        pptx: "https://img.icons8.com/color/96/ms-powerpoint.png",
+    };
 
-                const card = `
-                    <div class="bg-white border rounded-xl p-4 flex flex-col shadow hover:shadow-lg transition">
-                        <div class="flex justify-center mb-4">
-                            <img src="${iconUrl}" alt="File" class="w-12">
-                        </div>
-                        <h3 class="text-gray-700 font-semibold text-lg">${upload.title}</h3>
-                        <p class="text-sm text-gray-500 mb-2">${upload.category?.name ?? '-'}</p>
-                        <p class="text-gray-700 text-sm flex-grow">${upload.description?.substring(0, 60) ?? ''}</p>
-                        <p class="text-right mt-3 font-bold text-yellow-500">${priceText}</p>
-                    </div>
-                `;
-                container.append(card);
-            });
+    const ext = upload.file_name.toLowerCase().split(".").pop();
+    console.log("Ekstensi:", ext);
+
+    const iconUrl = icons[ext] ?? "https://img.icons8.com/color/96/file.png";
+
+    const priceText = upload.price > 0
+        ? `Rp ${new Intl.NumberFormat('id-ID').format(upload.price)}`
+        : 'Gratis';
+
+    const card = `
+        <div class="bg-white border rounded-xl p-4 flex flex-col shadow hover:shadow-lg transition">
+            <div class="flex justify-center mb-4">
+                <img src="${iconUrl}" alt="File" class="w-12 h-12 object-contain">
+            </div>
+            <h3 class="text-gray-700 font-semibold text-lg">${upload.title}</h3>
+            <p class="text-sm text-gray-500 mb-2">${upload.category?.name ?? '-'}</p>
+            <p class="text-gray-700 text-sm flex-grow">${upload.description?.substring(0, 60) ?? ''}</p>
+            <p class="text-right mt-3 font-bold text-yellow-500">${priceText}</p>
+        </div>
+    `;
+
+    $("#uploads-container").append(card);
+    });
+
+
+
         },
         error: function (xhr, status, error) {
             console.error("Error fetching materials:", error);
