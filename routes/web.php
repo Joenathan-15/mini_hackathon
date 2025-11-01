@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Material\MaterialController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['guest'])->group(function () {
@@ -12,10 +13,13 @@ Route::middleware(['guest'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
+    Route::view('/dashboard', 'dashboard')->name('dashboard');
     Route::view('/profile', 'pages.profile')->name('profile');
-    Route::view('/settings', 'pages.settings')->name('materials.index');
     Route::post("/logout", [AuthController::class, 'logout'])->name('logout');
+
+    Route::view('/upload', 'upload')->name('materials.create');
+    Route::get('/materials', [MaterialController::class, 'index'])->name('materials.index');
+    Route::post('/material', [MaterialController::class, 'store'])->name('material.store');
 });
 
 Route::get('/', function () {
