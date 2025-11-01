@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('body')
-<div class="min-h-screen bg-gradient-to-br from-yellow-50 to-white flex justify-center py-12 px-6">
+<div class="min-h-screen bg-linear-to-br from-yellow-50 to-white flex justify-center py-12 px-6">
     <div class="w-full max-w-6xl bg-white rounded-3xl shadow-lg p-10 relative">
 
         <!-- Tombol kembali -->
