@@ -1,135 +1,220 @@
-@extends('layouts.app')
+@extends('layouts.app') {{-- Ganti dari layouts.auth ke layouts.app --}}
+
+@section('title', 'Unggah Materi')
+
+@section('head')
+{{-- Tambahkan FontAwesome --}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+@endsection
 
 @section('body')
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-white">
-    <div id="dropZoneSection" class="w-full max-w-3xl text-center p-10">
-        <h1 class="text-2xl font-bold text-gray-700 mb-8">Unggah Catatan atau Jurnal</h1>
-
-        <!-- Drop Zone -->
-        <label for="fileInput"
-               id="dropZone"
-               class="border-2 border-dashed border-blue-400 bg-white rounded-2xl p-16 cursor-pointer hover:bg-blue-50 transition block">
-            <div class="flex flex-col items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-yellow-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M7 16V4m0 12a4 4 0 008 0m-8 0H5a2 2 0 00-2 2v3h18v-3a2 2 0 00-2-2h-2" />
-                </svg>
-                <p class="text-gray-600">Tarik & letakkan file di sini</p>
-                <p class="text-sm text-gray-400 mt-1">atau klik untuk memilih file (.pdf, .doc, .docx)</p>
-            </div>
-            <input type="file" id="fileInput" accept=".pdf,.doc,.docx" class="hidden" />
-        </label>
-
-        <button class="mt-6 text-gray-500 hover:underline" onclick="history.back()">← Kembali</button>
+<div class="container mx-auto px-4 py-12">
+    <div class="max-w-2xl mx-auto text-center mb-10">
+        <h1 class="text-3xl font-bold text-base-content mb-3">Unggah Catatan atau Jurnal</h1>
+        <p class="text-base-content/70">
+            Seret & letakkan file kamu di bawah, atau klik untuk memilih dari perangkat.
+        </p>
     </div>
 
-    <!-- Form Section -->
-    <div id="formSection" class="hidden w-full max-w-4xl bg-white rounded-2xl shadow-xl flex p-8 gap-8">
-        <!-- Preview -->
-        <div class="flex items-center justify-center border-2 border-dashed border-red-400 rounded-xl w-1/3 min-h-[300px]">
-            <div class="text-center">
-                <img id="fileIcon" src="" alt="File Icon" class="w-24 mx-auto mb-4">
-                <p id="fileName" class="text-sm text-gray-600"></p>
+    {{-- Pesan sukses / error --}}
+    @if (session('success'))
+    <div class="alert alert-success mb-5 shadow-lg">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    @if ($errors->any())
+    <div class="alert alert-error mb-5 shadow-lg">
+        <ul class="list-disc list-inside text-sm">
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
+    <!-- Dropzone -->
+    <div class="max-w-2xl mx-auto flex flex-col items-center">
+        <div id="dropzone-area"
+            class="w-full bg-base-200 border-2 border-dashed border-base-300 rounded-xl shadow-md p-10 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition text-center">
+            <i class="fas fa-cloud-upload-alt text-6xl text-primary mb-4"></i>
+            <p class="text-lg font-medium text-base-content">Tarik & letakkan file di sini</p>
+            <p class="text-sm text-base-content/70 mt-1">atau klik untuk memilih file</p>
+            <input id="file-input" type="file" name="file" class="hidden" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" />
+        </div>
+
+        <a href="{{ url('/') }}" class="btn btn-ghost mt-6 flex items-center justify-center gap-2">
+            <i class="fas fa-arrow-left"></i>
+            <span>Kembali</span>
+        </a>
+    </div>
+
+    <!-- Form detail -->
+    <div id="upload-form" class="max-w-2xl mx-auto bg-base-200 rounded-box shadow-lg p-8 mt-8 hidden">
+        <div class="flex items-center mb-6">
+            <div id="file-icon"
+                class="w-16 h-20 bg-neutral flex items-center justify-center text-white rounded-md mr-4">
+                <i class="fas fa-file text-2xl"></i>
+            </div>
+            <div>
+                <p id="file-name" class="font-semibold text-base-content"></p>
+                <p class="text-sm text-base-content/70" id="file-size"></p>
             </div>
         </div>
 
-        <!-- Form Fields -->
-        <div class="flex-1 space-y-4">
-            <h2 class="text-xl font-semibold text-gray-700">Detail File</h2>
-            <form id="uploadForm" action="{{ route('materials.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="file" id="hiddenFile">
+        {{-- Ganti action dengan route yang sesuai --}}
+        {{-- {{ route('materials.store') }} --}}
+        <form action="{{route('material.store')}}" method="POST" enctype="multipart/form-data" class="space-y-5">
+            @csrf
+            <input id="form-file-input" type="file" name="file_path" class="hidden" />
 
-                <div>
-                    <label class="block text-gray-600 font-medium">Judul</label>
-                    <input type="text" name="title" placeholder="Contoh: Catatan Perhitungan Fisika"
-                           class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
-                </div>
+            <div class="form-control">
+                <label class="label font-medium">Judul (Diperlukan)</label>
+                <input type="text" name="title" class="input input-bordered w-full"
+                    placeholder="Contoh: Catatan Pemrograman Web" required>
+            </div>
 
-                <div>
-                    <label class="block text-gray-600 font-medium">Deskripsi</label>
-                    <textarea name="description" placeholder="Berikan deskripsi file di sini..."
-                              class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-yellow-400 focus:outline-none"></textarea>
-                </div>
+            <div class="form-control">
+                <label class="label font-medium">Deskripsi (Diperlukan)</label>
+                <textarea name="description" class="textarea textarea-bordered w-full"
+                    placeholder="Berikan ringkasan singkat isi dokumen..." required></textarea>
+            </div>
 
-                <div class="flex items-center gap-4">
-                    <label class="block text-gray-600 font-medium">Tipe Publikasi</label>
-                    <label class="flex items-center gap-1">
-                        <input type="radio" name="type" value="Berbayar" class="text-yellow-500" checked>
-                        <span>Berbayar</span>
-                    </label>
-                    <label class="flex items-center gap-1">
-                        <input type="radio" name="type" value="Gratis" class="text-yellow-500">
+            {{-- Tambahkan field kategori --}}
+            <div class="form-control">
+                <label class="label font-medium">Kategori</label>
+                <select name="category" class="select select-bordered w-full" required>
+                    <option value="" disabled selected>Pilih kategori</option>
+                    <option value="Matematika">Matematika</option>
+                    <option value="Fisika">Fisika</option>
+                    <option value="Kimia">Kimia</option>
+                    <option value="Biologi">Biologi</option>
+                    <option value="Pemrograman">Pemrograman</option>
+                    <option value="Desain">Desain</option>
+                    <option value="Bisnis">Bisnis</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+            </div>
+
+            <div class="form-control">
+                <label class="label font-medium">Tipe Publikasi</label>
+                <div class="flex gap-4">
+                    <label class="cursor-pointer flex items-center gap-2">
+                        <input type="radio" name="type" value="free" class="radio radio-primary" checked>
                         <span>Gratis</span>
                     </label>
+                    <label class="cursor-pointer flex items-center gap-2">
+                        <input type="radio" name="type" value="paid" class="radio radio-primary">
+                        <span>Berbayar</span>
+                    </label>
                 </div>
+            </div>
 
-                <div>
-                    <label class="block text-gray-600 font-medium">Harga (Rp)</label>
-                    <input type="number" name="price" placeholder="contoh: 10000"
-                           class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
-                </div>
+            <div id="price-field" class="form-control hidden">
+                <label class="label font-medium">Harga (Rp)</label>
+                <input type="number" name="price" class="input input-bordered w-full" placeholder="Contoh: 5000"
+                    min="0">
+            </div>
 
-                <button type="submit"
-                        class="w-full mt-4 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded-lg transition">
-                    Publish
+            <div class="flex justify-between items-center">
+                <button type="button" id="cancel-upload" class="btn btn-ghost">
+                    <i class="fas fa-times"></i> Hapus
                 </button>
-            </form>
-        </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Kirim
+                </button>
+            </div>
+        </form>
     </div>
 </div>
+@endsection
 
+@section('script')
 <script>
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const dropZoneSection = document.getElementById('dropZoneSection');
-    const formSection = document.getElementById('formSection');
-    const fileNameDisplay = document.getElementById('fileName');
-    const fileIcon = document.getElementById('fileIcon');
+    (function(){
+        const dropzone = document.getElementById('dropzone-area');
+        const fileInput = document.getElementById('file-input');
+        const formFileInput = document.getElementById('form-file-input');
+        const uploadForm = document.getElementById('upload-form');
+        const fileNameEl = document.getElementById('file-name');
+        const fileSizeEl = document.getElementById('file-size');
+        const cancelUpload = document.getElementById('cancel-upload');
+        const priceField = document.getElementById('price-field');
+        const typeRadios = document.querySelectorAll('input[name="type"]');
 
-    dropZone.addEventListener('click', () => fileInput.click());
+        if (!dropzone) return;
 
-    dropZone.addEventListener('dragover', e => {
-        e.preventDefault();
-        dropZone.classList.add('bg-blue-50');
-    });
+        // klik buka picker
+        dropzone.addEventListener('click', () => fileInput.click());
 
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('bg-blue-50');
-    });
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            handleFile(file);
+        });
 
-    dropZone.addEventListener('drop', e => {
-        e.preventDefault();
-        dropZone.classList.remove('bg-blue-50');
-        const file = e.dataTransfer.files[0];
-        handleFile(file);
-    });
+        dropzone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropzone.classList.add('border-primary', 'bg-base-300');
+        });
 
-    fileInput.addEventListener('change', e => {
-        const file = e.target.files[0];
-        handleFile(file);
-    });
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('border-primary', 'bg-base-300');
+        });
 
-    function handleFile(file) {
-        const allowed = ["application/pdf",
-                         "application/msword",
-                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+        dropzone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropzone.classList.remove('border-primary', 'bg-base-300');
+            const file = event.dataTransfer.files[0];
+            handleFile(file);
+        });
 
-        if (file && allowed.includes(file.type)) {
-            fileNameDisplay.textContent = file.name;
+        function handleFile(file) {
+            if (file) {
+                // Validasi tipe file
+                const allowedTypes = ['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.txt'];
+                const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
 
-            // Ganti icon sesuai ekstensi
-            if (file.name.endsWith('.pdf')) {
-                fileIcon.src = "https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg";
-            } else {
-                fileIcon.src = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Microsoft_Word_2013-2019_logo.svg";
+                if (!allowedTypes.includes(fileExtension)) {
+                    alert('Tipe file tidak didukung. Silakan pilih file PDF, DOC, DOCX, PPT, PPTX, atau TXT.');
+                    return;
+                }
+
+                // Validasi ukuran file (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('Ukuran file terlalu besar. Maksimal 10MB.');
+                    return;
+                }
+
+                fileNameEl.textContent = file.name;
+                fileSizeEl.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+                dropzone.classList.add('hidden');
+                uploadForm.classList.remove('hidden');
+
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                formFileInput.files = dataTransfer.files;
             }
-
-            dropZoneSection.classList.add('hidden');
-            formSection.classList.remove('hidden');
-        } else {
-            alert("Hanya file PDF, DOC, atau DOCX yang diperbolehkan!");
         }
-    }
+
+        cancelUpload.addEventListener('click', () => {
+            if (fileInput) fileInput.value = '';
+            if (formFileInput) formFileInput.value = '';
+            uploadForm.classList.add('hidden');
+            dropzone.classList.remove('hidden');
+        });
+
+        typeRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'paid' && radio.checked) {
+                    priceField.classList.remove('hidden');
+                    priceField.querySelector('input').setAttribute('required', true);
+                } else if (radio.value === 'free' && radio.checked) {
+                    priceField.classList.add('hidden');
+                    priceField.querySelector('input').removeAttribute('required');
+                    priceField.querySelector('input').value = '';
+                }
+            });
+        });
+    })();
 </script>
 @endsection

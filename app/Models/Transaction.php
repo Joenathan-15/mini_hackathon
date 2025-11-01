@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -9,13 +10,20 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['owner_id', 'customer_id', 'price', 'status'];
+    protected $fillable = ['owner_id', 'customer_id', 'price', 'status', "material_id"];
 
-    public function owner(): BelongsTo {
+    public function material(): BelongsTo
+    {
+        return $this->belongsTo(Material::class, 'material_id');
+    }
+
+    public function owner(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function customer(): BelongsTo {
+    public function customer(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'customer_id');
     }
 }

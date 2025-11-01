@@ -9,6 +9,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('customer_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('material_id')->constrained('materials')->onDelete('cascade');
             $table->decimal('price', 10, 2);
             $table->string('status')->default('pending');
             $table->timestamps();
