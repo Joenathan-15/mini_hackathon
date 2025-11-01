@@ -66,8 +66,6 @@
         </div>
 
         <form id="login-form" class="space-y-4">
-            @csrf
-
             <!-- Email -->
             <div>
                 <label class="label">

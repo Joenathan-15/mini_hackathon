@@ -2,6 +2,13 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\MaterialDetailController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserInfoController;
 
 Route::middleware(['guest'])->group(function () {
     Route::view('/login', 'auth.login')->name('login');
@@ -21,3 +28,13 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
+
+Route::middleware('auth')->group(function () {
+    Route::resource('materials', MaterialController::class);
+    Route::resource('activities', ActivityController::class);
+    Route::resource('categories', CategoryController::class);
+    Route::resource('material-details', MaterialDetailController::class);
+    Route::resource('transactions', TransactionController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('user-infos', UserInfoController::class);
+});
