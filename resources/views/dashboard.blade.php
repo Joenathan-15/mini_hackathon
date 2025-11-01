@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section("title","Dashboard")
+@section("title","")
 @section('body')
 <div class="min-h-screen bg-linear-to-br from-yellow-50 to-white py-10">
     <div class="container mx-auto px-8">
@@ -41,13 +41,12 @@
 @endsection
 
 @section("script")
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-$(document).ready(function () {
+    $(document).ready(function () {
 
     // === Fetch Riwayat Pembelian ===
     $.ajax({
-        url: "{{ route('material.purchases.index') }}", // Adjust if needed
+        url: "{{ route('material.purchases.index') }}",
         type: "GET",
         dataType: "json",
         success: function (response) {
@@ -61,19 +60,33 @@ $(document).ready(function () {
 
             response.forEach(item => {
                 const isPdf = item.file_name.endsWith('.pdf');
+                const isWord = item.file_name.endsWith('.docx') || item.file_name.endsWith('.doc');
+
                 const iconUrl = isPdf
-                    ? "https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg"
-                    : "https://upload.wikimedia.org/wikipedia/commons/4/4f/Microsoft_Word_icon_%282019–present%29.svg";
+                    ? "{{ asset('images/pdf-icon.svg') }}"
+                    : isWord
+                        ? "{{ asset('images/word-icon.svg') }}"
+                        : "https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg";
+
+                const priceText = item.price > 0
+                    ? `<span class='bg-yellow-400 text-white px-4 py-1 rounded-full text-sm font-semibold'>
+                        Rp ${new Intl.NumberFormat('id-ID').format(item.price)}
+                       </span>`
+                    : `<span class='bg-green-400 text-white px-4 py-1 rounded-full text-sm font-semibold'>Gratis</span>`;
 
                 const card = `
-                    <div class="bg-white border rounded-xl p-4 flex flex-col shadow hover:shadow-lg transition">
+                    <div class="border-2 border-red-200 rounded-2xl p-5 shadow hover:shadow-lg transition bg-white">
                         <div class="flex justify-center mb-4">
-                            <img src="${iconUrl}" alt="File" class="w-12">
+                            <img src="${iconUrl}" alt="File Icon" class="w-16 h-16">
                         </div>
-                        <h3 class="text-gray-700 font-semibold text-lg">${item.title}</h3>
-                        <p class="text-sm text-gray-500 mb-2">${item.category?.name ?? '-'}</p>
-                        <p class="text-gray-700 text-sm flex-grow">${item.description?.substring(0, 60) ?? ''}</p>
-                        <p class="text-right mt-3 font-bold text-yellow-500">Rp ${new Intl.NumberFormat('id-ID').format(item.price)}</p>
+                        <h3 class="text-lg font-bold text-gray-800 text-center">${item.title}</h3>
+                        <p class="text-gray-500 text-sm mt-2 text-center">${item.description?.substring(0, 70) ?? ''}</p>
+                        <div class="flex justify-center mt-4">${priceText}</div>
+                        <div class="text-center mt-5">
+                            <a href="/materi/${item.id}" class="bg-yellow-400 text-white px-6 py-2 rounded-lg hover:bg-yellow-500 transition font-semibold">
+                                Lihat Detail
+                            </a>
+                        </div>
                     </div>
                 `;
                 container.append(card);
@@ -102,23 +115,33 @@ $(document).ready(function () {
 
             response.forEach(upload => {
                 const isPdf = upload.file_name.endsWith('.pdf');
+                const isWord = upload.file_name.endsWith('.docx') || upload.file_name.endsWith('.doc');
+
                 const iconUrl = isPdf
-                    ? "https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg"
-                    : "https://upload.wikimedia.org/wikipedia/commons/4/4f/Microsoft_Word_icon_%282019–present%29.svg";
+                    ? "{{ asset('images/pdf-icon.svg') }}"
+                    : isWord
+                        ? "{{ asset('images/word-icon.svg') }}"
+                        : "https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg";
 
                 const priceText = upload.price > 0
-                    ? `Rp ${new Intl.NumberFormat('id-ID').format(upload.price)}`
-                    : 'Gratis';
+                    ? `<span class='bg-yellow-400 text-white px-4 py-1 rounded-full text-sm font-semibold'>
+                        Rp ${new Intl.NumberFormat('id-ID').format(upload.price)}
+                       </span>`
+                    : `<span class='bg-green-400 text-white px-4 py-1 rounded-full text-sm font-semibold'>Gratis</span>`;
 
                 const card = `
-                    <div class="bg-white border rounded-xl p-4 flex flex-col shadow hover:shadow-lg transition">
+                    <div class="border-2 border-red-200 rounded-2xl p-5 shadow hover:shadow-lg transition bg-white">
                         <div class="flex justify-center mb-4">
-                            <img src="${iconUrl}" alt="File" class="w-12">
+                            <img src="${iconUrl}" alt="File Icon" class="w-16 h-16">
                         </div>
-                        <h3 class="text-gray-700 font-semibold text-lg">${upload.title}</h3>
-                        <p class="text-sm text-gray-500 mb-2">${upload.category?.name ?? '-'}</p>
-                        <p class="text-gray-700 text-sm flex-grow">${upload.description?.substring(0, 60) ?? ''}</p>
-                        <p class="text-right mt-3 font-bold text-yellow-500">${priceText}</p>
+                        <h3 class="text-lg font-bold text-gray-800 text-center">${upload.title}</h3>
+                        <p class="text-gray-500 text-sm mt-2 text-center">${upload.description?.substring(0, 70) ?? ''}...</p>
+                        <div class="flex justify-center mt-4">${priceText}</div>
+                        <div class="text-center mt-5">
+                            <a href="/materi/${upload.id}" class="bg-yellow-400 text-white px-6 py-2 rounded-lg hover:bg-yellow-500 transition font-semibold">
+                                Lihat Detail
+                            </a>
+                        </div>
                     </div>
                 `;
                 container.append(card);
