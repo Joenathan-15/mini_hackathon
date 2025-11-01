@@ -40,3 +40,8 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
+
+
+Route::get('/profile', function () {
+    return view('profile');
+})->name('profile');
