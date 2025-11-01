@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,11 +12,13 @@ class MaterialDetail extends Model
 
     protected $fillable = ['material_id', 'category_id'];
 
-    public function material(): BelongsTo {
+    public function material(): BelongsTo
+    {
         return $this->belongsTo(Material::class);
     }
 
-    public function category(): BelongsTo {
+    public function category(): BelongsTo
+    {
         return $this->belongsTo(Category::class);
     }
 }

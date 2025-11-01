@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -12,15 +13,24 @@ class Material extends Model
 
     protected $fillable = ['user_id', 'file_name', 'title', 'description', 'price'];
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function details(): HasMany {
+    public function details(): HasMany
+    {
         return $this->hasMany(MaterialDetail::class);
     }
 
-    public function activities(): HasMany {
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'material_details');
+    }
+
+
+    public function activities(): HasMany
+    {
         return $this->hasMany(Activity::class);
     }
 }
