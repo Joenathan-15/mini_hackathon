@@ -6,14 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Material;
 use App\Models\MaterialDetail;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 
 class MaterialController extends Controller
 {
     public function index()
     {
-        return view('pages.materials.index');
+        $materials = Material::with('details', "categories")->where("user_id", Auth::id())->get();
+        return response()->json($materials);
     }
 
     public function show(int $id)
@@ -74,6 +76,18 @@ class MaterialController extends Controller
             }
         }
 
-        return redirect()->route('materials.index')->with('success', 'Materi berhasil diunggah!');
+        return redirect()->route('dashboard')->with('success', 'Materi berhasil diunggah!');
+    }
+
+    public function getPurchasesMaterial()
+    {
+        $materials = Transaction::with('material')
+            ->where('customer_id', Auth::id())
+            ->get()
+            ->map(function ($transaction) {
+                return $transaction->material;
+            });
+
+        return response()->json($materials);
     }
 }
