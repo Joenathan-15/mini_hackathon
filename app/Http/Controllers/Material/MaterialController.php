@@ -24,6 +24,12 @@ class MaterialController extends Controller
         return view('pages.materials.show', compact('material'));
     }
 
+    public function explore()
+    {
+        $materi = Material::paginate(9);
+        return view('explore', compact('materi'));
+    }
+
     public function create()
     {
         return view('pages.materials.create');

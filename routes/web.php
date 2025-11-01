@@ -38,6 +38,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/material', [MaterialController::class, 'store'])->name('material.store');
 });
 
+Route::get('/detail', function () {
+    return view('detail');
+})->name('detail');
+
 Route::get('/explore', function () {
     $materi = collect([]); // data kosong dulu biar gak error
     return view('explore', compact('materi'));
