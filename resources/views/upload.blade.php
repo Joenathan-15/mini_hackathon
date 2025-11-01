@@ -85,7 +85,7 @@
             <div class="form-control">
                 <label class="label font-medium">Kategori</label>
                 <div id="category-input-container"
-                    class="flex flex-wrap items-center gap-2 input input-bordered w-full min-h-[3rem] p-2">
+                    class="flex flex-wrap items-center gap-2 input input-bordered w-full min-h-12 p-2">
                     <input id="category-input" type="text" class="flex-1 bg-transparent outline-none"
                         placeholder="Ketik dan tekan Enter..." />
                 </div>
