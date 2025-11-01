@@ -137,6 +137,7 @@
                 dataType: 'json',
                 success: function (data) {
                     categories = data.data || data || [];
+                    categories = categories[0]
                     refreshList();
                 },
                 error: function () {

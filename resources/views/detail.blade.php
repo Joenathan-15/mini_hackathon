@@ -10,7 +10,7 @@
     <!-- Gambar PDF -->
     <div class="flex justify-center">
       <div class="border-4 border-red-400 rounded-xl p-10">
-        <img src="{{ asset('images/pdf-icon.png') }}" alt="PDF" class="w-40 mx-auto">
+        <img src="https://img.icons8.com/color/96/pdf.png" alt="PDF" class="w-40 mx-auto">
       </div>
     </div>
 
